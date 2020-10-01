@@ -1,5 +1,5 @@
 from settings import API_KEY, PROXY_PASSWORD, PROXY_URL, PROXY_USERNAME
-from handlers import greet_user
+from handlers import give_menu, count_cars, detect_defects
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
 import logging
@@ -15,17 +15,28 @@ PROXY = {'proxy_url': PROXY_URL,
     }
 }
 
+
+
 def main():
     # Создаем бота и передаем ему ключ для авторизации на серверах Telegram
-    mybot = Updater(API_KEY, use_context=True)
+    bot = Updater(API_KEY, use_context=True)
 
-    dp = mybot.dispatcher
-    dp.add_handler(CommandHandler("start", greet_user))
+    dp = bot.dispatcher
+    #dp.add_handler(CommandHandler("start", give_menu))
+
+    
+    dp.add_handler(MessageHandler(Filters.photo, give_menu))
+    dp.add_handler(MessageHandler(Filters.regex('^(Count Cars)$'), count_cars))
+    dp.add_handler(MessageHandler(Filters.regex('^(Detect Defects)$'), detect_defects))
 
     # Командуем боту начать ходить в Telegram за сообщениями
-    mybot.start_polling()
+    bot.start_polling()
     # Запускаем бота, он будет работать, пока мы его не остановим принудительно
-    mybot.idle()
+    bot.idle()
+
+
 
 if __name__ == "__main__":
     main()
+
+
