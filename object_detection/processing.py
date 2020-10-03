@@ -6,6 +6,7 @@ from torch import nn
 from torchvision import transforms
 from torchvision.models import mobilenet_v2
 from PIL import Image
+
 MODEL = None
 RESCALE_SIZE = 224
 
@@ -48,8 +49,9 @@ def get_image(img_name):
 def process_picture(picture_filename):
     """get prediction and returns description of this picture"""
     if MODEL is None:
-        MODEL = get_model('./model/mobilenetv2_80ep.dict')
-    label_encoder = pickle.load(open("./model/label_encoder.pkl", 'rb'))
+        MODEL = get_model('../model/mobilenetv2_80ep.dict')
+    with open("../model/label_encoder.pkl", 'rb') as f:
+        label_encoder = pickle.load(f)
     img = get_image(picture_filename)
     prob_pred = predict_one_sample(MODEL, img[None, ...])
     y_pred = np.argmax(prob_pred)
