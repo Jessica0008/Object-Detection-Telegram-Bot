@@ -1,6 +1,9 @@
 #API keys, logins, access
 settings.py
 
+#env
+botenv/
+requirements.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
