@@ -15,9 +15,8 @@ def get_model(name, n_outputs=3):
     """load pretrained model"""
     simple_cnn = mobilenet_v2(pretrained=False)
     simple_cnn.classifier = nn.Sequential(
-        nn.Dropout(0.2),
-        nn.BatchNorm1d(1280),
-        nn.Linear(1280, n_outputs, bias=True))
+        nn.Dropout(0.2), nn.BatchNorm1d(1280), nn.Linear(1280, n_outputs, bias=True)
+    )
     simple_cnn.load_state_dict(torch.load(name))
     return simple_cnn
 
@@ -34,14 +33,16 @@ def predict_one_sample(model, inputs):
 def get_image(img_name):
     """преобразованиe изображений в тензоры PyTorch и нормализации входа"""
     # для преобразования изображений в тензоры PyTorch и нормализации входа
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
     image = Image.open(img_name)
     image.load()
     out = np.array(image.resize((RESCALE_SIZE, RESCALE_SIZE)))
-    out = np.array(out / 255, dtype='float32')
+    out = np.array(out / 255, dtype="float32")
     out = transform(out)
     return out
 
@@ -49,12 +50,12 @@ def get_image(img_name):
 def process_picture(picture_filename):
     """get prediction and returns description of this picture"""
     if MODEL is None:
-        MODEL = get_model('../model/mobilenetv2_80_3_cl.dict')
-    with open("../model/label_encoder.pkl", 'rb') as f:
+        MODEL = get_model("../model/mobilenetv2_80_3_cl.dict")
+    with open("../model/label_encoder.pkl", "rb") as f:
         label_encoder = pickle.load(f)
     img = get_image(picture_filename)
     prob_pred = predict_one_sample(MODEL, img[None, ...])
     y_pred = np.argmax(prob_pred)
     predicted_label = label_encoder.classes_[y_pred]
-    other = "Это асфальт" if predicted_label == '0' else "Это посторонний предмет"
-    return "Это дефект" if predicted_label == '1' else other
+    other = "Это асфальт" if predicted_label == "0" else "Это посторонний предмет"
+    return "Это дефект" if predicted_label == "1" else other
