@@ -11,7 +11,7 @@ MODEL = None
 RESCALE_SIZE = 224
 
 
-def get_model(name, n_outputs=2):
+def get_model(name, n_outputs=3):
     """load pretrained model"""
     simple_cnn = mobilenet_v2(pretrained=False)
     simple_cnn.classifier = nn.Sequential(
@@ -49,11 +49,12 @@ def get_image(img_name):
 def process_picture(picture_filename):
     """get prediction and returns description of this picture"""
     if MODEL is None:
-        MODEL = get_model('../model/mobilenetv2_80ep.dict')
+        MODEL = get_model('../model/mobilenetv2_80_3_cl.dict')
     with open("../model/label_encoder.pkl", 'rb') as f:
         label_encoder = pickle.load(f)
     img = get_image(picture_filename)
     prob_pred = predict_one_sample(MODEL, img[None, ...])
     y_pred = np.argmax(prob_pred)
     predicted_label = label_encoder.classes_[y_pred]
-    return "Это дефект" if predicted_label == '0' else "Это асфальт"
+    other = "Это асфальт" if predicted_label == '0' else "Это посторонний предмет"
+    return "Это дефект" if predicted_label == '1' else other
