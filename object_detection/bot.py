@@ -22,13 +22,13 @@ def main():
     bot = Updater(API_KEY, use_context=True)
 
     dp = bot.dispatcher
-    #dp.add_handler(CommandHandler("start", give_menu))
-
+    dp.add_handler(CommandHandler("detect_defects", detect_defects))
+    dp.add_handler(CommandHandler("count_cars", count_cars))
     
     dp.add_handler(MessageHandler(Filters.photo, give_menu))
     dp.add_handler(MessageHandler(Filters.regex('^(Count Cars)$'), count_cars))
     dp.add_handler(MessageHandler(Filters.regex('^(Detect Defects)$'), detect_defects))
-
+    print("starting")
     # Командуем боту начать ходить в Telegram за сообщениями
     bot.start_polling()
     # Запускаем бота, он будет работать, пока мы его не остановим принудительно
