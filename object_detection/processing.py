@@ -56,5 +56,6 @@ def process_picture(picture_filename):
     prob_pred = predict_one_sample(MODEL, img[None, ...])
     y_pred = np.argmax(prob_pred)
     predicted_label = label_encoder.classes_[y_pred]
-    other = "Это асфальт" if predicted_label == '0' else "Это посторонний предмет"
-    return "Это дефект" if predicted_label == '1' else other
+    other = "асфальт" if predicted_label == '0' else "посторонний предмет"
+    result = "дефект" if predicted_label == '1' else other
+    return (result, y_pred)
