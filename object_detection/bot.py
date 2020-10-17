@@ -1,5 +1,5 @@
 from settings import API_KEY, PROXY_PASSWORD, PROXY_URL, PROXY_USERNAME
-from handlers import detect_defects
+from handlers import detect_defects, count_cars
 from utils import give_menu, send_picture, get_picture
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
