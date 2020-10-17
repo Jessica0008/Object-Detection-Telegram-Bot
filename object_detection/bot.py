@@ -1,5 +1,5 @@
 from settings import API_KEY, PROXY_PASSWORD, PROXY_URL, PROXY_USERNAME
-from handlers import detect_defects, count_cars
+from handlers import detect_defects, count_cars, get_stats
 from utils import give_menu, send_picture, get_picture
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
@@ -19,6 +19,10 @@ def main():
     bot = Updater(API_KEY, use_context=True)
 
     dp = bot.dispatcher
+    
+    dp.add_handler(CommandHandler("detect_defects", detect_defects))
+    dp.add_handler(CommandHandler("count_cars", count_cars))
+    dp.add_handler(CommandHandler("statistic", get_stats))
 
     # dp.add_handler(CommandHandler("start", give_menu))
 

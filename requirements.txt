@@ -17,3 +17,4 @@ sklearn
 tensorflow
 tqdm
 matplotlib
+pymongo
