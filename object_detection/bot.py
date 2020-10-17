@@ -19,6 +19,7 @@ def main():
     bot = Updater(API_KEY, use_context=True)
 
     dp = bot.dispatcher
+
     # dp.add_handler(CommandHandler("start", give_menu))
 
     dp.add_handler(MessageHandler(Filters.photo, get_picture))
