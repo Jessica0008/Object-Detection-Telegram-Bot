@@ -11,3 +11,7 @@ def detect_defects(update, context):
     user_photo.download(file_name)
     send_picture(update=update, context=context, picture_filename="bot.png")
     pass
+
+
+def count_cars(update, context):
+    pass
