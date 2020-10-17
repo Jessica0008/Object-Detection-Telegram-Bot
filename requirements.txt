@@ -14,12 +14,6 @@ wheel
 numpy==1.19.0
 pandas
 sklearn
-tensorflow==1.14.0
-keras== 2.2.0
-opencv-python
-tqdm
-torch
-imageAI
+tensorflow
 tqdm
 matplotlib
-torchvision
