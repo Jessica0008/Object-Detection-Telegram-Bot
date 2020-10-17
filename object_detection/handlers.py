@@ -48,3 +48,5 @@ def get_stats(update, context):
     text += "\n изображений с посторонним предметом: " + str(results[2])
     text += "\n всего машин: " + str(total)
     update.message.reply_text(text)
+    pass
+
