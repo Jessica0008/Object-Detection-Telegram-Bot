@@ -10,11 +10,11 @@ CLIENT = MongoClient(settings.MONGO_LINK)
 DB = CLIENT["testdb"]
 
 
-def detect_defects(filename):
+def detect(filename):
     print("Ищем дефекты на " + filename)
-    # result, y_pred = process_picture(filename)
-    # save_detected_defects(DB, "web_user", y_pred, result)
-    return "дефект"
+    result, y_pred = process_picture(filename)
+    save_detected_defects(DB, "web_user", y_pred, result)
+    return result
 
 
 def get_stats():
@@ -28,6 +28,6 @@ def get_stats():
     return text
 
 
-def count_cars(filename):
-    save_car_counts(db, "web_user", np.random.randint(15), 0.0)
-    return "всего машин 7"
+def count(filename):
+    save_car_counts(DB, "web_user", np.random.randint(15), 0.0)
+    return "всего машин 1"
