@@ -12,13 +12,15 @@ def count():
     pass
 
 
-def main_processing(request, proc_func, main_func):
+def main_processing(request, proc_func, redirect_func):
     try:
         file = request.files['file']
         if file:
-            file.save(os.path.join("./", file.filename))
-            proc_func()
-            return main_func()
+            os.makedirs("downloads", exist_ok=True)
+            file_name = os.path.join("downloads", file.filename)
+            file.save(file_name)
+            proc_func(file_name)
+            return redirect_func()
     except(requests.RequestException, ValueError):
         return error()
 
