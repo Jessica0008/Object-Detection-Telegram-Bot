@@ -19,7 +19,7 @@ def detect_defects(update, context):
         update.message.reply_text("Загрyзите изображение")
         return
     # send_picture(update=update, context=context, picture_filename=file_name)
-    print("Ищем дефекты")
+    print("Ищем дефекты на " + context.user_data['last_image'])
     result, y_pred = process_picture(context.user_data['last_image'])
     save_detected_defects(DB, update.effective_user.id, y_pred, result)
     print(result)
