@@ -14,16 +14,16 @@ DB = CLIENT["testdb"]
 
 def detect_defects(update, context):
     user = get_or_create_user(DB, update.effective_user, update.message.chat.id)
-    print("Ищем дефекты")
     os.makedirs("downloads", exist_ok=True)
-    user_photo = context.bot.getFile(update.message.photo[-1].file_id)
-    file_name = os.path.join("downloads", f"{user_photo.file_id}.jpg")
-    user_photo.download(file_name)
-    send_picture(update=update, context=context, picture_filename=file_name)
-    print("распоzнаем дефекты " + file_name)
-    result, y_pred = process_picture(file_name)
+    if 'last_image' not in context.user_data:
+        update.message.reply_text("Загрyзите изображение")
+        return
+    # send_picture(update=update, context=context, picture_filename=file_name)
+    print("Ищем дефекты")
+    result, y_pred = process_picture(context.user_data['last_image'])
     save_detected_defects(DB, update.effective_user.id, y_pred, result)
-    update.message.reply_text("Eто " + result)
+    print(result)
+    update.message.reply_text("Это " + result)
 
 
 def get_stats(update, context):
