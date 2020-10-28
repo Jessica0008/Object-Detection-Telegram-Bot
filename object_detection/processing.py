@@ -49,9 +49,11 @@ def get_image(img_name):
 
 def process_picture(picture_filename):
     """get prediction and returns description of this picture"""
+    mobilenet = os.path.join("..", os.path.join("model", "mobilenetv2_80_3_cl.dict"))
     if MODEL is None:
-        MODEL = get_model("../model/mobilenetv2_80_3_cl.dict")
-    with open("../model/label_encoder.pkl", "rb") as f:
+        MODEL = get_model(mobilenet)
+    encoder_file = os.path.join("..", os.path.join("model", "label_encoder.pkl"))
+    with open(encoder_file, "rb") as f:
         label_encoder = pickle.load(f)
     img = get_image(picture_filename)
     prob_pred = predict_one_sample(MODEL, img[None, ...])
@@ -60,4 +62,4 @@ def process_picture(picture_filename):
     
     other = "асфальт" if predicted_label == '0' else "посторонний предмет"
     result = "дефект" if predicted_label == '1' else other
-    return (result, y_pred)
+    return (result, int(y_pred))

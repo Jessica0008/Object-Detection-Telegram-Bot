@@ -37,18 +37,16 @@ def get_picture_token(chat_id):
 
 
 def get_picture(update, context):
-
     update.message.reply_text("Обрабатываю фото")
     os.makedirs("downloads", exist_ok=True)
     photo_file = context.bot.getFile(update.message.photo[0].file_id)
-
-    token = get_picture_token(context.chat_id)
-    filename = os.path.join("downloads", f"{context.chat_id}-{token}.jpg")
+    token = get_picture_token(update.message.chat.id)
+    filename = os.path.join("downloads", f"{update.message.chat.id}-{token}.jpg")
     photo_file.download(filename)
-
+    context.user_data['last_image'] = filename
     update.message.reply_text("Файл сохранен")
     give_menu(update, context)
-    return filename
+    return
 
 
 def main_keyboard():
