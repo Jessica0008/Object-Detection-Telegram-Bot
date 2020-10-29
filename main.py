@@ -4,10 +4,12 @@ import os
 import requests
 import business_logic
 from business_logic import detect, count
+from webapp.forms import LoginForm
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 app = Flask(__name__, static_url_path='/static')
+app.config.from_pyfile('settings.py')
     
 
 def process_file(request):
@@ -17,6 +19,13 @@ def process_file(request):
         file_name = os.path.join("static", file.filename)
         file.save(file_name)
         return file_name
+
+
+@app.route("/login")
+def login():
+    title = "Login"
+    form = LoginForm()
+    return render_template('login.html', title=title, form=form)
 
 
 @app.route("/error")
