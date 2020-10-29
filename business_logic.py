@@ -21,10 +21,14 @@ def get_stats():
     """ Расчет общей статистики """
     results = defects_stat(DB)
     total = cars_stat(DB)
-    text = "\n изображений с асфальтом: " + str(results[0])
-    text += "\n изображений с дефектом: " + str(results[1])
-    text += "\n изображений с посторонним предметом: " + str(results[2])
-    text += "\n всего машин: " + str(total)
+    asphalt_count = results[0]
+    defect_count = results[1]
+    other_obj_count = results[2]
+    text = f"""
+    изображений с асфальтом: {asphalt_count}
+    изображений с дефектом: {defect_count}
+    изображений с посторонним предметом: {other_obj_count}
+    всего машин: {total}"""
     return text
 
 
