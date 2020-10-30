@@ -1,5 +1,4 @@
 
-
 def get_or_create_user(db, effective_user, chat_id):
     user = db.users.find_one({"user_id": effective_user.id})
     if not user:
@@ -10,6 +9,18 @@ def get_or_create_user(db, effective_user, chat_id):
         db.users.insert_one(user)
     return user
 
+
+def get_or_create_auth_user(db, login, hashed_pwd, role):
+    user = db.auth_users.find_one({"id": login})
+    if not user:
+        user = {
+            "id": login,
+            "username": login,
+            "password": hashed_pwd,
+            "role": role
+        }
+        db.auth_users.insert_one(user)
+    return user
 
 def save_car_counts(db, user_id, car_count, ratio_in_img):
     data = {
