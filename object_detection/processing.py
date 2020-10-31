@@ -7,7 +7,6 @@ from torchvision import transforms
 from torchvision.models import mobilenet_v2
 from PIL import Image
 
-MODEL = None
 RESCALE_SIZE = 224
 
 
@@ -17,8 +16,11 @@ def get_model(name, n_outputs=3):
     simple_cnn.classifier = nn.Sequential(
         nn.Dropout(0.2), nn.BatchNorm1d(1280), nn.Linear(1280, n_outputs, bias=True)
     )
-    simple_cnn.load_state_dict(torch.load(name))
+    simple_cnn.load_state_dict(torch.load(name, map_location=torch.device('cpu')))
     return simple_cnn
+
+
+MODEL = get_model("model/mobilenetv2_80_3_cl.dict")
 
 
 def predict_one_sample(model, inputs):
@@ -49,11 +51,7 @@ def get_image(img_name):
 
 def process_picture(picture_filename):
     """get prediction and returns description of this picture"""
-    mobilenet = os.path.join("..", os.path.join("model", "mobilenetv2_80_3_cl.dict"))
-    if MODEL is None:
-        MODEL = get_model(mobilenet)
-    encoder_file = os.path.join("..", os.path.join("model", "label_encoder.pkl"))
-    with open(encoder_file, "rb") as f:
+    with open("model/label_encoder.pkl", "rb") as f:
         label_encoder = pickle.load(f)
     img = get_image(picture_filename)
     prob_pred = predict_one_sample(MODEL, img[None, ...])
