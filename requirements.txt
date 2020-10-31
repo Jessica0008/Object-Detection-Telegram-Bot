@@ -30,3 +30,7 @@ requests==2.24.0
 urllib3==1.25.11
 Werkzeug==1.0.1
 WTForms==2.3.3
+dnspython
+flask_login
+torch
+torchvision
