@@ -1,1 +1,2 @@
-SECRET_KEY = "gfdsSDRGDFBw345678kljhkjgh"
+import os
+SECRET_KEY = os.getenv('SECRET_KEY', '')

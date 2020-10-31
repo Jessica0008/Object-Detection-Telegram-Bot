@@ -6,6 +6,7 @@ import settings
 from pymongo import MongoClient
 from db import get_or_create_user, save_detected_defects, save_car_counts
 from db import defects_stat, cars_stat
+from processing import process_picture
 
 CLIENT = MongoClient(settings.MONGO_LINK)
 DB = CLIENT["testdb"]
@@ -13,14 +14,16 @@ DB = CLIENT["testdb"]
 
 def detect_defects(update, context):
     user = get_or_create_user(DB, update.effective_user, update.message.chat.id)
-    print("Ищем дефекты")
-    update.message.reply_text("Ищем дефекты")
-    save_detected_defects(DB, update.effective_user.id, np.random.randint(2), "")
     os.makedirs("downloads", exist_ok=True)
-    user_photo = context.bot.getFile(update.message.photo[-1].file_id)
-    file_name = os.path.join("downloads", f"{user_photo.file_id}.jpg")
-    user_photo.download(file_name)
-    send_picture(update=update, context=context, picture_filename="../bot.png")
+    if 'last_image' not in context.user_data:
+        update.message.reply_text("Загрyзите изображение")
+        return
+    # send_picture(update=update, context=context, picture_filename=file_name)
+    print("Ищем дефекты на " + context.user_data['last_image'])
+    result, y_pred = process_picture(context.user_data['last_image'])
+    save_detected_defects(DB, update.effective_user.id, y_pred, result)
+    print(result)
+    update.message.reply_text("Это " + result)
 
 
 def get_stats(update, context):
@@ -31,8 +34,9 @@ def get_stats(update, context):
     text += "\n изображений с посторонним предметом: " + str(results[2])
     text += "\n всего машин: " + str(total)
     update.message.reply_text(text)
-    pass
 
 
 def count_cars(update, context):
+    user = get_or_create_user(DB, update.effective_user, update.message.chat.id)
+    save_car_counts(DB, update.effective_user.id, np.random.randn(15), 0.0)
     pass
