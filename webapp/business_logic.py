@@ -1,12 +1,12 @@
 from glob import glob
 import os
 import numpy as np
-import settings
+from webapp.settings import MONGO_LINK
 from pymongo import MongoClient
 from object_detection.db import save_detected_defects, save_car_counts, defects_stat, cars_stat
 from object_detection.processing import process_picture
 
-CLIENT = MongoClient(settings.MONGO_LINK)
+CLIENT = MongoClient(MONGO_LINK)
 DB = CLIENT["testdb"]
 
 
@@ -20,12 +20,15 @@ def detect(filename):
 def get_stats():
     """ Расчет общей статистики """
     results = defects_stat(DB)
+    asp_count = results[0]
+    def_count = results[1]
+    oth_count = results[2]
     total = cars_stat(DB)
-    text = "\n изображений с асфальтом: " + str(results[0])
-    text += "\n изображений с дефектом: " + str(results[1])
-    text += "\n изображений с посторонним предметом: " + str(results[2])
-    text += "\n всего машин: " + str(total)
-    return text
+    asphalt = f"изображений с асфальтом: {asp_count}"
+    defect = f"изображений с дефектом: {def_count}"
+    other = f"изображений с посторонним предметом: {oth_count}"
+    cars = f"всего машин: {total}"
+    return (asphalt, defect, other, cars)
 
 
 def count(filename):

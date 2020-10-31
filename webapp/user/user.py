@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(UserMixin):
 
     def __init__(self, login, role):
-        super.__init__()
         self.id = login
         self.username = login
         self.role = role
