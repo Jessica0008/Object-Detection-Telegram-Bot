@@ -51,10 +51,8 @@ def intersection_over_b_area(boxA, boxB):
 def plot_non_max_suppression(numpy_img, preds, label, color):
     """ non max suppression + duplicates suppression"""
     def suppress(box, boxes, indexes):
-        print([intersection_over_union(box, boxes[i]) for i in indexes])
         ious_50 = [i for i in indexes if(intersection_over_union(box, boxes[i]) >= 0.50)]
         duplicates = [i for i in indexes if(intersection_over_b_area(box, boxes[i]) >= 0.91)]
-        print(duplicates)
         for i in set(duplicates).union(set(ious_50)):
             indexes.remove(i)
         return 
@@ -65,7 +63,7 @@ def plot_non_max_suppression(numpy_img, preds, label, color):
     
     indexes = list(np.arange(len(boxes)))
     result_boxes = []
-# 
+    # suppression algorithm
     while len(indexes) > 0:
         #
         box = boxes[indexes[0]]
@@ -73,7 +71,7 @@ def plot_non_max_suppression(numpy_img, preds, label, color):
         # 
         suppress(box, boxes, indexes)
         result_boxes.append(box)
-
+    # adding rectangles
     nimg = cv2.UMat(numpy_img)
     for box in result_boxes:
         nimg = cv2.rectangle(nimg, 
@@ -98,7 +96,6 @@ def get_all_boxes(image, predictions):
         image = img_with_boxes[1]
         all_boxes.extend(img_with_boxes[0])
         counts.append(len(img_with_boxes[0]))
-    print(all_boxes)
     return (all_boxes, image, counts)
 
 
@@ -106,9 +103,8 @@ def detect_all_autos(model, fname):
     img_numpy = cv2.imread(fname)[:,:,::-1]
     print("in count_cars: stage 1")
     predictions = detect_auto(model, img_numpy)
-    print("stage 2")
     result = get_all_boxes(img_numpy, predictions)
-    print("stage3")
+    print("stage2")
     counts = result[2]
     msg = f"Общее количество машин на фото {len(result[0])} (Всего автомобилей {counts[0]}, всего автобусов {counts[1]}, всего грузовиков {counts[2]})"
     img_array = result[1].astype('uint8')

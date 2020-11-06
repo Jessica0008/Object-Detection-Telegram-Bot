@@ -20,9 +20,6 @@ def get_model(name, n_outputs=3):
     return simple_cnn
 
 
-MODEL = get_model("model/mobilenetv2_80_3_cl.dict")
-
-
 def predict_one_sample(model, inputs):
     """Предсказание, для одной картинки"""
     with torch.no_grad():
@@ -49,12 +46,11 @@ def get_image(img_name):
     return out
 
 
-def process_picture(picture_filename):
+def process_picture(model, label_encoder, picture_filename):
     """get prediction and returns description of this picture"""
-    with open("model/label_encoder.pkl", "rb") as f:
-        label_encoder = pickle.load(f)
+
     img = get_image(picture_filename)
-    prob_pred = predict_one_sample(MODEL, img[None, ...])
+    prob_pred = predict_one_sample(model, img[None, ...])
     y_pred = np.argmax(prob_pred)
     predicted_label = label_encoder.classes_[y_pred]
     

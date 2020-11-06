@@ -1,5 +1,5 @@
 from settings import API_KEY, PROXY_PASSWORD, PROXY_URL, PROXY_USERNAME
-from handlers import detect_defects, count_cars, get_stats
+from handlers import detect_defects, count_cars, get_stats, start
 from utils import give_menu, send_picture, get_picture
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram import ReplyKeyboardMarkup
@@ -20,17 +20,17 @@ def main():
 
     dp = bot.dispatcher
     
-    dp.add_handler(CommandHandler("detect_defects", detect_defects))
-    dp.add_handler(CommandHandler("count_cars", count_cars))
-    dp.add_handler(CommandHandler("statistic", get_stats))
+    dp.add_handler(CommandHandler("statistics", get_stats))
 
-    # dp.add_handler(CommandHandler("start", give_menu))
+    dp.add_handler(CommandHandler("start", start))
 
     dp.add_handler(MessageHandler(Filters.photo, get_picture))
-    # dp.add_handler(MessageHandler(Filters.regex("^(Count Cars)$"), count_cars))
+
     dp.add_handler(MessageHandler(Filters.regex("^(Detect Defects)$"), detect_defects))
+    dp.add_handler(MessageHandler(Filters.regex("^(Count Cars)$"), count_cars))
 
     # Командуем боту начать ходить в Telegram за сообщениями
+    print("bot started")
     bot.start_polling()
     # Запускаем бота, он будет работать, пока мы его не остановим принудительно
     bot.idle()

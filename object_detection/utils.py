@@ -11,8 +11,6 @@ def give_menu(update, context):
 
 
 def send_picture(update, context, picture_filename):
-    # cat_photos_list = glob('images/cat*.jp*g')
-    # picture_filename = choice(photos_list)
     chat_id = update.effective_chat.id
     jpg_file = open(picture_filename, "rb")
     context.bot.send_photo(
@@ -40,6 +38,7 @@ def get_picture(update, context):
     update.message.reply_text("Обрабатываю фото")
     os.makedirs("downloads", exist_ok=True)
     photo_file = context.bot.getFile(update.message.photo[0].file_id)
+    print(photo_file, update.message.photo[0].file_id)
     token = get_picture_token(update.message.chat.id)
     filename = os.path.join("downloads", f"{update.message.chat.id}-{token}.jpg")
     photo_file.download(filename)

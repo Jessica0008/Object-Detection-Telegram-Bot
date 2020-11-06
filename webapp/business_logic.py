@@ -5,7 +5,7 @@ from object_detection.processing import process_picture
 from object_detection.cars_counting import detect_all_autos
 from webapp.user.models import Defects, CarCounts
 from webapp.db import DB as db
-from webapp.dl import CARS_RCNN_MODEL
+from webapp.dl import CARS_RCNN_MODEL, DEFECTS_MODEL, LABEL_ENCODER
 from sqlalchemy.sql import func
 
 
@@ -13,7 +13,7 @@ from sqlalchemy.sql import func
 def detect(filename):
     """ Ищем дефекты """
     print("Ищем дефекты на " + filename)
-    result, y_pred = process_picture(filename)
+    result, y_pred = process_picture(DEFECTS_MODEL, LABEL_ENCODER, filename)
     row = Defects(image=filename, object_class=int(y_pred), object_label=result)
     db.session.add(row)
     db.session.commit()
