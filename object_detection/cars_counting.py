@@ -51,16 +51,17 @@ def intersection_over_b_area(boxA, boxB):
 def plot_non_max_suppression(numpy_img, preds, label, color):
     """ non max suppression + duplicates suppression"""
     def suppress(box, boxes, indexes):
-        ious_50 = [i for i in indexes if(intersection_over_union(box, boxes[i]) >= 0.5)]
+        print([intersection_over_union(box, boxes[i]) for i in indexes])
+        ious_50 = [i for i in indexes if(intersection_over_union(box, boxes[i]) >= 0.50)]
         duplicates = [i for i in indexes if(intersection_over_b_area(box, boxes[i]) >= 0.91)]
-        ious_50.extend(set(duplicates).difference(set(ious_50)))
-        for i in ious_50:
+        print(duplicates)
+        for i in set(duplicates).union(set(ious_50)):
             indexes.remove(i)
         return 
 
     labels = preds['labels'].detach().numpy()
     scores = preds['scores'].detach().numpy()
-    boxes = preds['boxes'].detach().numpy()[(labels == label) & (scores >= 0.5)]
+    boxes = preds['boxes'].detach().numpy()[(labels == label) & (scores >= 0.55)]
     
     indexes = list(np.arange(len(boxes)))
     result_boxes = []
@@ -97,19 +98,22 @@ def get_all_boxes(image, predictions):
         image = img_with_boxes[1]
         all_boxes.extend(img_with_boxes[0])
         counts.append(len(img_with_boxes[0]))
+    print(all_boxes)
     return (all_boxes, image, counts)
 
 
 def detect_all_autos(model, fname):
-    img_numpy = cv2.imread(fname)
+    img_numpy = cv2.imread(fname)[:,:,::-1]
+    print("in count_cars: stage 1")
     predictions = detect_auto(model, img_numpy)
+    print("stage 2")
     result = get_all_boxes(img_numpy, predictions)
+    print("stage3")
     counts = result[2]
-    msg = f"""Всего автомобилей {counts[0]}, всего автобусов {counts[1]}, всего грузовиков {counts[2]}
-    Общее количество машин на фото {len(result[0])}"""
+    msg = f"Общее количество машин на фото {len(result[0])} (Всего автомобилей {counts[0]}, всего автобусов {counts[1]}, всего грузовиков {counts[2]})"
     img_array = result[1].astype('uint8')
     im = Image.fromarray(img_array, 'RGB')
     out_file = fname.split('.')[0] + "_file.jpg"
     im.save(out_file)
     im.close()
-    return (total, msg, out_file)
+    return (len(result[0]), msg, out_file)

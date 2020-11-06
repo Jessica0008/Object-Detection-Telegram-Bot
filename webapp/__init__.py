@@ -59,7 +59,8 @@ def create_app():
             if file_name is None:
                 return error()
             answer = car_count(file_name)
-            return render_template('show_cars.html', main_img="/" + file_name, answer=answer)
+            file_name = answer[1]
+            return render_template('show_cars.html', main_img="/" + file_name, answer=answer[0])
         return render_template('submit.html', main_text="Count cars")
 
 
