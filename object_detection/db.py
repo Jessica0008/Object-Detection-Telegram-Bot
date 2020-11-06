@@ -22,8 +22,9 @@ def get_or_create_auth_user(db, login, hashed_pwd, role):
         db.auth_users.insert_one(user)
     return user
 
-def save_car_counts(db, user_id, car_count, ratio_in_img):
+def save_car_counts(db, user_id, car_count, ratio_in_img, img_name = ""):
     data = {
+        "image": img_name,
         "car_count": car_count,
         "ratio": ratio_in_img,
         "user_id": user_id
@@ -31,8 +32,9 @@ def save_car_counts(db, user_id, car_count, ratio_in_img):
     db.car_counts.insert_one(data)
 
 
-def save_detected_defects(db, user_id, object_class, label):
+def save_detected_defects(db, user_id, object_class, label, img_name = ""):
     data = {
+        "image": img_name,
         "object_class": object_class,
         "object_label": label,
         "user_id": user_id
