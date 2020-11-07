@@ -11,11 +11,10 @@ tornado==6.0.4
 emoji==0.5.4
 clarifai==2.6.2
 wheel
-numpy==1.19.0
+numpy==1.18.5
 pandas
 sklearn
 tensorflow
-tqdm
 matplotlib
 pymongo
 chardet==3.0.4
@@ -32,5 +31,12 @@ Werkzeug==1.0.1
 WTForms==2.3.3
 dnspython
 flask_login
+flask_sqlalchemy
+opencv-python
+Pillow
+cpuonly
+libuv
+ninja
 torch
+torchaudio
 torchvision

@@ -2,8 +2,8 @@
 settings.py
 
 #env
+webapp.db
 botenv/
-requirements.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

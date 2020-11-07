@@ -1,36 +1,44 @@
 from glob import glob
 import os
 import numpy as np
-from webapp.settings import MONGO_LINK
-from pymongo import MongoClient
-from object_detection.db import save_detected_defects, save_car_counts, defects_stat, cars_stat
 from object_detection.processing import process_picture
+from object_detection.cars_counting import detect_all_autos
+from webapp.user.models import Defects, CarCounts
+from webapp.db import DB as db
+from webapp.dl import CARS_RCNN_MODEL, DEFECTS_MODEL, LABEL_ENCODER
+from sqlalchemy.sql import func
 
-CLIENT = MongoClient(MONGO_LINK)
-DB = CLIENT["testdb"]
 
 
 def detect(filename):
+    """ Ищем дефекты """
     print("Ищем дефекты на " + filename)
-    result, y_pred = process_picture(filename)
-    save_detected_defects(DB, "web_user", y_pred, result)
+    result, y_pred = process_picture(DEFECTS_MODEL, LABEL_ENCODER, filename)
+    row = Defects(image=filename, object_class=int(y_pred), object_label=result)
+    db.session.add(row)
+    db.session.commit()
     return result
 
 
 def get_stats():
     """ Расчет общей статистики """
-    results = defects_stat(DB)
-    asp_count = results[0]
-    def_count = results[1]
-    oth_count = results[2]
-    total = cars_stat(DB)
-    asphalt = f"изображений с асфальтом: {asp_count}"
-    defect = f"изображений с дефектом: {def_count}"
-    other = f"изображений с посторонним предметом: {oth_count}"
-    cars = f"всего машин: {total}"
-    return (asphalt, defect, other, cars)
+    labels = ["асфальт", "дефект", "посторонний предмет"]
+    asphalt_count = Defects.query.filter(Defects.object_class == 0).count()
+    defects_count = Defects.query.filter(Defects.object_class == 1).count()
+    other_count = Defects.query.filter(Defects.object_class == 2).count()
+    tentity = CarCounts.query.with_entities(func.sum(CarCounts.car_count).label("total")).first()
+    total = tentity.total
+    query_count = CarCounts.query.count()
+    messages = [f"всего найдено машин: {total} по {query_count} запросам",
+        f"изображений с асфальтом: {asphalt_count}",
+        f"изображений с дефектом: {defects_count}",
+        f"изображений с посторонним предметом {other_count}"]
+    return (messages, [asphalt_count, defects_count, other_count], labels)
 
 
-def count(filename):
-    save_car_counts(DB, "web_user", np.random.randint(15), 0.0)
-    return "всего машин 1"
+def car_count(filename):
+    result = detect_all_autos(CARS_RCNN_MODEL, filename)
+    row = CarCounts(image=filename, car_count=result[0], ratio=0.0)
+    db.session.add(row)
+    db.session.commit()
+    return result[1:]

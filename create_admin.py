@@ -1,18 +1,27 @@
+""" create admin user """
 from getpass import getpass
 import sys
-from object_detection.db import get_or_create_auth_user
-from werkzeug.security import generate_password_hash
-from settings import MONGO_LINK
-from pymongo import MongoClient
+from webapp import create_app
+from webapp.db import DB
+from webapp.user.models import User
 
-CLIENT = MongoClient(MONGO_LINK)
-DB = CLIENT["testdb"]
+app = create_app()
 
-username = input('Введите имя пользователя: ')
-password = getpass('Введите пароль: ')
-password2 = getpass('Повторите пароль: ')
-if not password == password2:
-    sys.exit(0)
+with app.app_context():
+    username = input("Введите имя пользователя: ")
 
-user = get_or_create_auth_user(DB, username, generate_password_hash(password), role='admin')
-print('User with id {} added'.format(username))
+    if User.query.filter(User.username == username).count():
+        print("Такой пользователь уже есть")
+        sys.exit(0)
+
+    password = getpass("Введите пароль: ")
+    password2 = getpass("Повторите пароль: ")
+    if not password == password2:
+        print("password != password2")
+        sys.exit(0)
+    new_user = User(username=username, role="admin")
+    new_user.set_password(password)
+
+    DB.session.add(new_user)
+    DB.session.commit()
+    print("User with id {} added".format(new_user.id))

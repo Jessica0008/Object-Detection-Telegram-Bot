@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="container">
-        <p>Object detection web-site</p>
         <div class="row">
-            <div class="col-8">
+		    <div class="col-4">
+            </div>
+            <div class="col-4">
+				{% with messages = get_flashed_messages() %}
+					{% if messages %}
+					<div class="alert alert-warning" role="alert">
+						{% for message in messages %}
+							{{ message }}<br>
+						{% endfor %}
+					</div>
+					{% endif %}
+				{% endwith %}
+				<br>
+				<b>{{ main_text }}</b>
+				<br>
             </div>
             <div class="col-4">
             </div>
