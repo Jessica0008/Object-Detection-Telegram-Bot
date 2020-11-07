@@ -1,7 +1,8 @@
 """cars counting functions"""
 import cv2
-import torch
 import numpy as np
+from cv2 import UMat, rectangle
+from torch import from_numpy
 from PIL import Image
 
 
@@ -12,7 +13,7 @@ def detect_auto(model, image):
     # загружаем картинку со стандартным преобразованием цветов
     img_numpy = image[:,:,::-1]
     # преобразуем картинку в torch тензор
-    img = torch.from_numpy(img_numpy.astype("float32")).permute(2,0,1)
+    img = from_numpy(img_numpy.astype("float32")).permute(2,0,1)
     # приводим масштаб цветов к (0. , 1.)
     img = img / 255.
     # нейросеть предсказывает, что находится на картинке и обводит распознанные обьекты рамкой
@@ -66,9 +67,9 @@ def plot_non_max_suppression(numpy_img, preds, label, color):
         suppress(box, boxes, indexes)
         result_boxes.append(box)
     # adding rectangles
-    nimg = cv2.UMat(numpy_img)
+    nimg = UMat(numpy_img)
     for box in result_boxes:
-        nimg = cv2.rectangle(nimg,
+        nimg = rectangle(nimg,
             (box[0], box[1]),
             (box[2], box[3]),
             color = color,
@@ -100,11 +101,12 @@ def detect_all_autos(model, fname):
     predictions = detect_auto(model, img_numpy)
     result = get_all_boxes(img_numpy, predictions)
     counts = result[2]
-    tot_count = len(result[0])
-    msg = f"Общее количество машин на фото {tot_count} (Всего автомобилей {counts[0]}, всего автобусов {counts[1]}, всего грузовиков {counts[2]})"
+    total_count = len(result[0])
+    msg = f"Общее количество машин на фото {total_count} (Всего автомобилей {counts[0]}, \
+        всего автобусов {counts[1]}, всего грузовиков {counts[2]})"
     img_array = result[1].astype("uint8")
     image = Image.fromarray(img_array, "RGB")
     out_file = fname.split(".")[0] + "_file.jpg"
     image.save(out_file)
     image.close()
-    return (tot_count, msg, out_file)
+    return (total_count, msg, out_file)

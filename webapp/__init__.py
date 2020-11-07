@@ -1,7 +1,6 @@
 """ Flask app """
 import os
-import requests
-from flask import Flask, render_template, flash, redirect, url_for, request
+from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_login import LoginManager
 from webapp.business_logic import detect, car_count
 from webapp.db import DB
@@ -24,7 +23,8 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(user_id)
+        user = User.query.get(user_id)
+        return user
 
 
     def process_file(request):
@@ -36,16 +36,9 @@ def create_app():
             return file_name
 
 
-    @app.route("/error")
-    def error():
-        text = "Server error"
-        return render_template("index.html", main_text=text)
-
-
     @app.route("/")
     def index():
-        text = "ПРАКТИЧЕСКОЕ ПРИМЕНЕНИЕ OBJECT DETECTION"
-        return render_template("index.html", main_text=text)
+        return render_template("index.html")
 
 
     @app.route("/cars/", methods = ["GET", "POST"])
@@ -53,10 +46,10 @@ def create_app():
         if request.method =="POST":
             file_name = process_file(request)
             if file_name is None:
-                return error()
+                flash("Ошибка загрузки файла")
+                return redirect(url_for("index"))
             answer = car_count(file_name)
-            file_name = answer[1]
-            return render_template("show_cars.html", main_img="/" + file_name, answer=answer[0])
+            return render_template("show_cars.html", main_img="/" + answer[1], answer=answer[0])
         return render_template("submit.html", main_text="Count cars")
 
 
@@ -65,7 +58,8 @@ def create_app():
         if request.method =="POST":
             file_name = process_file(request)
             if file_name is None:
-                return error()
+                flash("Ошибка загрузки файла")
+                return redirect(url_for("index"))
             answer = detect(file_name)
             return render_template("show_result.html", main_img="/" + file_name, answer=answer)
         return render_template("submit.html", main_text="Detect defects")

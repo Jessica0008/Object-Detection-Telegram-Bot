@@ -13,13 +13,12 @@ def give_menu(update, context):
 def send_picture(update, context, picture_filename):
     """ send picture """
     chat_id = update.effective_chat.id
-    jpg_file = open(picture_filename, "rb")
-    context.bot.send_photo(
-        chat_id=chat_id,
-        photo=jpg_file,
-        reply_markup=main_keyboard(),
-    )
-    jpg_file.close()
+    with open(picture_filename, "rb") as jpg_file:
+        context.bot.send_photo(
+            chat_id=chat_id,
+            photo=jpg_file,
+            reply_markup=main_keyboard(),
+        )
 
 
 def get_picture_token(chat_id):
@@ -30,7 +29,7 @@ def get_picture_token(chat_id):
             return 1
         max_token = 0
         for image in jpg_images:
-            token = int(search("\-(.*?)\.", image).group(1))
+            token = int(search(r"\-(.*?)\.", image).group(1))
             if token > max_token:
                 max_token = token
         return max_token + 1

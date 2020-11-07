@@ -1,11 +1,13 @@
-import torchvision
+"""DL constants"""
 import pickle
+import torchvision
 from object_detection.processing import get_model
 
 
 def get_encoder():
-    with open("model/label_encoder.pkl", "rb") as f:
-        label_encoder = pickle.load(f)
+    """get encoder"""
+    with open("model/label_encoder.pkl", "rb") as file:
+        label_encoder = pickle.load(file)
     return label_encoder
 
 

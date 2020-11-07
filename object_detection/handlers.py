@@ -21,21 +21,23 @@ def detect_defects(update, context):
         update.message.reply_text("Загрyзите изображение")
         return
     image = context.user_data["last_image"]
-    print(f"Ищем дефекты на {image}")
+    print("Ищем дефекты")
     result, y_pred = process_picture(DEFECTS_MODEL, LABEL_ENCODER, image)
     user_id = update.effective_user.id
     save_detected_defects(DB, user_id, y_pred, result, img_name=image)
     update.message.reply_text("Это " + result, reply_markup=main_keyboard())
 
 
+
 def get_stats(update, context):
     """ get stats """
     results = defects_stat(DB)
     total = cars_stat(DB)
-    text = f"""изображений с асфальтом: {results[0]}
+    text = f"""
+    всего найдено машин: {total}
+    изображений с асфальтом: {results[0]}
     изображений с дефектом: {results[1]}
-    изображений с посторонним предметом: {results[2]}
-    всего машин: {total}"""
+    изображений с посторонним предметом: {results[2]}"""
     update.message.reply_text(text, reply_markup=main_keyboard())
 
 

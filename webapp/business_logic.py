@@ -1,12 +1,11 @@
-from glob import glob
-import os
-import numpy as np
+"""business logic"""
 from object_detection.processing import process_picture
 from object_detection.cars_counting import detect_all_autos
+from sqlalchemy.sql import func
 from webapp.user.models import Defects, CarCounts
 from webapp.db import DB as db
 from webapp.dl import CARS_RCNN_MODEL, DEFECTS_MODEL, LABEL_ENCODER
-from sqlalchemy.sql import func
+
 
 
 
@@ -37,6 +36,7 @@ def get_stats():
 
 
 def car_count(filename):
+    """car count"""
     result = detect_all_autos(CARS_RCNN_MODEL, filename)
     row = CarCounts(image=filename, car_count=result[0], ratio=0.0)
     db.session.add(row)
