@@ -2,7 +2,9 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col-8">
+		    <div class="col-4">
+            </div>
+            <div class="col-4">
 				{% with messages = get_flashed_messages() %}
 					{% if messages %}
 					<div class="alert alert-warning" role="alert">
@@ -13,7 +15,7 @@
 					{% endif %}
 				{% endwith %}
 				<br>
-				<b>Object detection web-site</b>
+				<b>{{ main_text }}</b>
 				<br>
             </div>
             <div class="col-4">

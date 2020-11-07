@@ -11,10 +11,10 @@ class User(DB.Model, UserMixin):
     
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role == "admin"
 
     def __repr__(self):
-        return '<User {} {}>'.format(self.id, self.username)
+        return "<User {} {}>".format(self.id, self.username)
         
     def set_password(self, password):
         self.password = generate_password_hash(password)

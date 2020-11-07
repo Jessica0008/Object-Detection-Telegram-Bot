@@ -1,3 +1,4 @@
+""" create database """
 from webapp.db import DB
 from webapp import create_app
 

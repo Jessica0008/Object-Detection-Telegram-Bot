@@ -22,17 +22,18 @@ def detect(filename):
 
 def get_stats():
     """ Расчет общей статистики """
+    labels = ["асфальт", "дефект", "посторонний предмет"]
     asphalt_count = Defects.query.filter(Defects.object_class == 0).count()
     defects_count = Defects.query.filter(Defects.object_class == 1).count()
     other_count = Defects.query.filter(Defects.object_class == 2).count()
-    tentity = CarCounts.query.with_entities(func.sum(CarCounts.car_count).label('total')).first()
+    tentity = CarCounts.query.with_entities(func.sum(CarCounts.car_count).label("total")).first()
     total = tentity.total
     query_count = CarCounts.query.count()
-    asphalt = f"изображений с асфальтом: {asphalt_count}"
-    defect = f"изображений с дефектом: {defects_count}"
-    other = f"изображений с посторонним предметом {other_count}"
-    cars = f"всего найдено машин: {total} по {query_count} запросам"
-    return (cars, asphalt, defect, other, [asphalt_count, defects_count, other_count])
+    messages = [f"всего найдено машин: {total} по {query_count} запросам",
+        f"изображений с асфальтом: {asphalt_count}",
+        f"изображений с дефектом: {defects_count}",
+        f"изображений с посторонним предметом {other_count}"]
+    return (messages, [asphalt_count, defects_count, other_count], labels)
 
 
 def car_count(filename):
